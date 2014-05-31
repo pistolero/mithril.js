@@ -45,3 +45,47 @@ test('issue99 regression', function() {
 	m.render(dummyEl, view2);
 	equal(dummyEl.innerHTML, '<div><span>0</span></div>', 'view2 should be rendered correctly');
 });
+
+
+test('node identity remove firstChild', function() {
+	expect(2);
+	var view1 = m('div', {}, [
+		m('div', {key:1}, 'E1'),
+		m('div', {key:2}, 'E2'),
+	]);
+	m.render(dummyEl, view1);
+
+	var node2 = dummyEl.firstChild.lastChild;
+	equal(node2.innerHTML, 'E2')
+
+	var view2 = m('div', {}, [
+		m('div', {key:2}, 'E2'),
+	]);
+	m.render(dummyEl, view2);
+
+	equal(dummyEl.firstChild.firstChild, node2);
+
+})
+
+test('node identity change order', function() {
+	expect(2);
+	var view1 = m('div', {}, [
+		m('div', {key:1}, 'E1'),
+		m('div', {key:2}, 'E2'),
+		m('div', {key:3}, 'E3'),
+	]);
+	m.render(dummyEl, view1);
+
+	var e2 = dummyEl.firstChild.firstChild.nextSibling;
+	equal(e2.innerHTML, 'E2')
+
+	var view2 = m('div', {}, [
+		m('div', {key:2}, 'E2'),
+		m('div', {key:1}, 'E1'),
+		m('div', {key:3}, 'E3'),
+	]);
+	m.render(dummyEl, view2);
+
+	equal(dummyEl.firstChild.firstChild, e2);
+
+})

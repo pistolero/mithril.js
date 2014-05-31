@@ -55,7 +55,7 @@ Mithril = m = new function app(window) {
 
             // reorder cached
             var reordered = false;
-            for (var i=0;i<data.length;i++) {
+            for (var i=data.length-1;i>=0;i--) {
             	var dkey = dataKeys[i];
             	if (dkey === undefined)
             		continue

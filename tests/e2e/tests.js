@@ -87,5 +87,27 @@ test('node identity change order', function() {
 	m.render(dummyEl, view2);
 
 	equal(dummyEl.firstChild.firstChild, e2);
+})
+
+test('node identity remove in the middle', function() {
+	expect(2);
+	var view1 = m('div', {}, [
+		m('div', {key:1}, 'E1'),
+		m('div', {key:2}, 'E2'),
+		m('div', {key:3}, 'E3'),
+	]);
+	m.render(dummyEl, view1);
+
+	var e3 = dummyEl.firstChild.lastChild;
+	equal(e3.innerHTML, 'E3')
+
+	var view2 = m('div', {}, [
+		m('div', {key:1}, 'E1'),
+		m('div', {key:3}, 'E3'),
+	]);
+	m.render(dummyEl, view2);
+
+	equal(dummyEl.firstChild.firstChild.nextSibling, e3);
 
 })
+

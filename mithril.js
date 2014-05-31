@@ -45,6 +45,44 @@ Mithril = m = new function app(window) {
 
 		if (dataType == "[object Array]") {
 			var nodes = [], intact = cached.length === data.length, subArrayCount = 0
+
+            var dataKeys = data.map(function(x) {
+            	return x && x.attrs && x.attrs.key;
+            });
+            var cachedKeys = cached.map(function(x) {
+            	return x && x.attrs && x.attrs.key;
+            });
+
+            // reorder cached
+            var reordered = false;
+            for (var i=0;i<data.length;i++) {
+            	var dkey = dataKeys[i];
+            	if (dkey === undefined)
+            		continue
+            	var idx = cachedKeys.indexOf(dkey);
+            	if (idx<0) {
+            		// do we need to do something here?
+            	} else if (idx != i) {
+            		reordered = true;
+            		var el = cached.splice(idx, 1)[0];
+            		cached.splice(i, 0, el);
+            		cachedKeys.splice(idx,1);
+            		cachedKeys.splice(i, 0, dkey);
+            		// move node
+            		parentElement.removeChild(el.nodes[0]);
+            		if (i == 0) {
+            			parentElement.insertBefore(el.nodes[0], parentElement.firstChild);
+            		} else {
+            			parentElement.insertBefore(el.nodes[0], cached[i-1].nodes[0].nextSibling);
+            		}
+            	}
+            }
+            if (reordered) {
+            	cached.nodes = []
+                for (var i = 0; i < cached.length; i++)
+                    cached.nodes = cached.nodes.concat(cached[i].nodes)
+            }
+
 			for (var i = 0, cacheCount = 0; i < data.length; i++) {
 				var item = build(parentElement, null, data[i], cached[cacheCount], shouldReattach, index + subArrayCount || subArrayCount, editable, namespace)
 				if (item === undefined) continue

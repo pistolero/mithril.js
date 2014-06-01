@@ -1,0 +1,83 @@
+<html>
+<script src="mithril.js"></script>
+<body>
+<div id="left"></div>
+<div id="right"></div>
+</body>
+</html>
+<script>
+
+var view = function(ctrl) {
+var items = ctrl.items.map(function(x, idx) {
+  var left = ((idx-ctrl.items.length+5)*50) + 'px';
+  return m('div.box', {key:x, style:{left:left}}, x)
+})
+return m('div.container', items);
+}
+
+
+var app_left = {
+  controller: function() {
+    window.C = this;
+    this.items = [1,2,3,4,5,6];
+    
+    this.tick = function() {
+//       var v = this.items.pop();
+//       this.items.unshift(v+this.items.length+1);
+
+      var v = this.items.shift();
+      this.items.push(v+this.items.length+1);
+      
+      
+      m.redraw();
+      console.log(this.items);
+      setTimeout(this.tick, 1000);  
+    }.bind(this)
+    setTimeout(this.tick, 1000);
+  }, 
+  view: view
+}
+
+var app_right = {
+  controller: function() {
+    window.C = this;
+    this.items = [5,4,3,2,1,0];
+    
+    this.tick = function() {
+      var v = this.items.pop();
+      this.items.unshift(v+this.items.length+1);
+            
+      m.redraw();
+      setTimeout(this.tick, 1000);  
+    }.bind(this)
+    setTimeout(this.tick, 1000);
+  }, 
+  view: view
+}
+
+
+m.module(document.getElementById('left'), app_left);
+m.module(document.getElementById('right'), app_right);
+</script>
+<style>
+.container {
+  position:relative;
+  width: 201px;  
+  height:52px;
+  overflow:hidden;
+  background:lime;
+}
+
+.box {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  top: 0;
+  line-height: 50px;
+  text-align:center;
+  border: 1px solid #333;
+  -webkit-transition: all 1s linear;
+  -moz-transition: all 1s linear;
+  transition: all 1s linear;  
+}
+</style>
